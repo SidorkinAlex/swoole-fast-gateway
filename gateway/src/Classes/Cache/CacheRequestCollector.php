@@ -6,11 +6,11 @@ class CacheRequestCollector
 {
     protected MemoryCacheRequest $memoryCache;
 
-    /**
-     * @param MemoryCacheRequest $memoryCache
-     */
     public function __construct(\stdClass $config)
     {
+        if (isset($config->cacheMemoryClasses)) {
+            $this->memoryCache = new MemoryCacheRequest();
+        }
         $this->memoryCache = new MemoryCacheRequest();
     }
 
