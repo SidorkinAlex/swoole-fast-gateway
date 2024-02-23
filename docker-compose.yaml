@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  swoole-http-gateway:
+    image: phpswoole/swoole:php8.1
+    #    restart: always
+    volumes:
+      - ./gateway:/var/www
+    ports:
+      - '81:9501'
