@@ -28,17 +28,17 @@ class Application
     private function initConfig(): void
     {
         $content = file_get_contents(__DIR__ . "/../config.json");
-        if($content === false){
+        if ($content === false) {
             echo "config.json not exist or is not readable";
             exit(1);
         }
         $config_body = json_decode($content);
         unset($content);
-        if($config_body === false){
-         echo "config.json is not set or is not valid JSON";
+        if ($config_body === false) {
+            echo "config.json is not set or is not valid JSON";
             exit(1);
         }
-        $this->config=$config_body;
+        $this->config = $config_body;
         unset($config_body);
         try {
             $this->config = ConfigValidator::Validate($this->config);
@@ -48,6 +48,7 @@ class Application
         }
         $this->add2Config();
     }
+
     private function add2Config(): void
     {
         $namespace = [
@@ -82,6 +83,5 @@ class Application
             exit(1);
         }
     }
-
 
 }
