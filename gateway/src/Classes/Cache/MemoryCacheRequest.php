@@ -9,9 +9,6 @@ class MemoryCacheRequest implements CacheInterface, CacheCyclicValidateInterface
 
     private \stdClass $repository;
 
-    /**
-     * @param \stdClass $repository
-     */
     public function __construct()
     {
         $this->repository = new \stdClass();
@@ -48,6 +45,11 @@ class MemoryCacheRequest implements CacheInterface, CacheCyclicValidateInterface
         return true;
     }
 
+    /**
+     * @param iterable<string> $keys
+     * @param mixed|null $default
+     * @return iterable<mixed>
+     */
     public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
         $result = [];
@@ -61,6 +63,12 @@ class MemoryCacheRequest implements CacheInterface, CacheCyclicValidateInterface
         return $result;
     }
 
+    /**
+     * @param iterable<mixed> $values
+     * @param \DateInterval|int|null $ttl
+     * @return bool
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
     public function setMultiple(iterable $values, \DateInterval|int|null $ttl = null): bool
     {
         foreach ($values as $key => $value) {
@@ -91,6 +99,7 @@ class MemoryCacheRequest implements CacheInterface, CacheCyclicValidateInterface
     public function validateCache(): void
     {
         $now = time();
+        /** @phpstan-ignore-next-line */
         foreach ($this->repository as $key => $value) {
             if ($this->repository->{$key}->time < $now) {
                 unset($this->repository->{$key});
