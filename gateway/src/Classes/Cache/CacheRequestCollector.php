@@ -46,5 +46,13 @@ class CacheRequestCollector
     {
         return $this->memoryCache;
     }
+    public function getCachedRepository(string $repositoryName): CacheInterface
+    {
+        if(array_key_exists($repositoryName, $this->cacheRepository)){
+            return $this->cacheRepository[$repositoryName];
+        } else {
+            throw new \InvalidArgumentException('Cache repository mit name'. $repositoryName . ' does not exist',1200);
+        }
+    }
 
 }
