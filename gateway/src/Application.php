@@ -16,13 +16,13 @@ class Application
 {
     private stdClass $config;
 
-    private CacheRequestCollector $repositoryCache;
+    private CacheRequestCollector $cacheRequestCollector;
 
 
     public function __construct()
     {
         $this->initConfig();
-        $this->repositoryCache = new CacheRequestCollector($this->config);
+        $this->cacheRequestCollector = new CacheRequestCollector($this->config);
     }
 
     private function initConfig(): void
@@ -82,6 +82,11 @@ class Application
             echo $e->getMessage();
             exit(1);
         }
+    }
+
+    public function getRepositoryCache(): CacheRequestCollector
+    {
+        return $this->cacheRequestCollector;
     }
 
 }
