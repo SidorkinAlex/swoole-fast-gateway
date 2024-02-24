@@ -2,34 +2,86 @@
 
 namespace Sidalex\Gateway\Classes\Cache;
 
-class MemoryCacheRequest implements CacheRequestInterface
-{
-    /**
-     * @var array<mixed>
-     */
-    private array $repository = [];
+use Psr\SimpleCache\CacheInterface;
 
-    public function setCache(string $key, mixed $value, int $ttl = 600): void
+class MemoryCacheRequest implements CacheInterface, CacheCyclicValidateInterface
+{
+
+    private \stdClass $repository;
+
+    /**
+     * @param \stdClass $repository
+     */
+    public function __construct()
     {
-        if ($ttl == 0) {
+        $this->repository = new \stdClass();
+    }
+
+    public function get(string $key, mixed $default = null): mixed
+    {
+        return $this->repository->{$key}->value;
+    }
+
+    public function set(string $key, mixed $value, \DateInterval|int|null $ttl = null): bool
+    {
+        if ($ttl instanceof \DateInterval) {
+            $ttl = $ttl->s;
+        }
+        if (is_null($ttl)) {
             $ttl = 9999999;
         }
-        $this->repository[$key]['value'] = $value;
-        $this->repository[$key]['time'] = (time()) + $ttl;
-
+        $this->repository->{$key}->value = $value;
+        $this->repository->{$key}->time = (time()) + $ttl;
+        return true;
     }
 
-    public function getCache(string $key): mixed
+    public function delete(string $key): bool
     {
-        return $this->repository[$key]['value'];
+        unset($this->repository->{$key});
+        return true;
     }
 
-    public function hasKey(string $key): bool
+    public function clear(): bool
     {
+        unset($this->repository);
+        $this->repository = new \stdClass();
+        return true;
+    }
 
-        if (array_key_exists($key, $this->repository)) {
+    public function getMultiple(iterable $keys, mixed $default = null): iterable
+    {
+        $result = [];
+        foreach ($keys as $key) {
+            if (!empty($this->repository->{$keys})) {
+                $result[$key] = $this->repository->{$keys};
+            } else {
+                $result[$key] = $default;
+            }
+        }
+        return $result;
+    }
 
-            if ($this->repository[$key]['time'] > time()) {
+    public function setMultiple(iterable $values, \DateInterval|int|null $ttl = null): bool
+    {
+        foreach ($values as $key => $value) {
+            $this->set($key, $value);
+        }
+        return true;
+    }
+
+    public function deleteMultiple(iterable $keys): bool
+    {
+        foreach ($keys as $key) {
+            $this->delete($key);
+        }
+        return true;
+    }
+
+    public function has(string $key): bool
+    {
+        if (property_exists($this->repository, $key)) {
+
+            if ($this->repository->{$key}->time > time()) {
                 return true;
             }
         }
@@ -38,17 +90,11 @@ class MemoryCacheRequest implements CacheRequestInterface
 
     public function validateCache(): void
     {
-        $newRepository = [];
-
-        $newRepository = array_filter(
-            $this->repository,
-            function ($value) {
-                if ($value['time'] > time()) {
-                    return $value;
-                }
+        $now = time();
+        foreach ($this->repository as $key => $value) {
+            if ($this->repository->{$key}->time < $now) {
+                unset($this->repository->{$key});
             }
-        );
-        unset($this->repository);
-        $this->repository = $newRepository;
+        }
     }
 }
