@@ -26,4 +26,10 @@ $http->on(
         });
     }
 );
+$http->on(
+    "request",
+    function (Request $request, Response $response) use ($app) {
+        $app->proxy($request,$response);
+    }
+);
 $http->start();
