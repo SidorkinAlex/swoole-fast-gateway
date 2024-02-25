@@ -89,4 +89,24 @@ class Application
         return $this->cacheRequestCollector;
     }
 
+    public function proxy(\Swoole\Http\Request $request, \Swoole\Http\Response $response): void
+    {
+
+        $request = $this->swooleRequestMutationHook($request);
+
+        //todo next proxy logic
+
+    }
+
+    private function swooleRequestMutationHook(\Swoole\Http\Request $request): \Swoole\Http\Request
+    {
+        $swooleRequestMutationCollector = new SwooleRequestMutationCollector($this->config);
+        if ($swooleRequestMutationCollector->getCountMutationExecutors() > 0) {
+            foreach ($swooleRequestMutationCollector->getMutationExecutors() as $MutationExecutor) {
+                $request = $MutationExecutor->mutation($request);
+            }
+        }
+        return $request;
+    }
+
 }
