@@ -84,7 +84,7 @@ class Application
         }
     }
 
-    public function getRepositoryCache(): CacheRequestCollector
+    public function getRepositoryCacheCollector(): CacheRequestCollector
     {
         return $this->cacheRequestCollector;
     }
@@ -93,6 +93,8 @@ class Application
     {
 
         $request = $this->swooleRequestMutationHook($request);
+
+        $client = new Requester($request, $this->getRepositoryCacheCollector());
 
         //todo next proxy logic
 
