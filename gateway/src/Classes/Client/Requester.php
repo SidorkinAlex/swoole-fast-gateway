@@ -31,5 +31,16 @@ class Requester
         $this->cacheRequestCollector = $cacheRequestCollector;
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     */
+    public function execute(Application $app): ResponseInterface
+    {
+
+
+
+        return $response;
+    }
+
 
 }
