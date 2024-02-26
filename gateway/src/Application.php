@@ -2,7 +2,9 @@
 
 namespace Sidalex\Gateway;
 
+use GuzzleHttp\Psr7\Response;
 use HaydenPierce\ClassFinder\ClassFinder;
+use Psr\Http\Client\ClientExceptionInterface;
 use Sidalex\Gateway\Classes\Cache\CacheRequestCollector;
 use Sidalex\Gateway\Classes\Cache\ResponseCache;
 use Sidalex\Gateway\Classes\Client\Requester;
@@ -95,6 +97,17 @@ class Application
         $request = $this->swooleRequestMutationHook($request);
 
         $client = new Requester($request, $this->getRepositoryCacheCollector());
+
+        try {
+            $response_data = $client->execute($this);
+        } catch (ClientExceptionInterface $e) {
+            $response_data = new Response(500,["Content-Type" => 'application/json'],
+                json_encode(
+                    [
+                        "errorMessage" => $e->getMessage(),
+                    ]
+                ));
+        }
 
         //todo next proxy logic
 
