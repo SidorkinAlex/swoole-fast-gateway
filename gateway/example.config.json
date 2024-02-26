@@ -1,0 +1,32 @@
+{
+  "ProxyMainHost": "https://ya.ru",
+  "SwooleRequestMutationClass": [],
+  "PsrRequestMutationClass": [],
+  "cacheClasses": [
+    {
+      "className": "RedisCache",
+      "constructorParameters": [
+        "host",
+        "port",
+        "logging"
+      ]
+    }
+  ],
+  "endpointProxyPolitic": "proxy_only_to_host",
+  "endpointList": [
+    {
+      "uri":"/test/endpoint",
+      "sendQueryParams": true,
+      "whitelistQueryParams": [
+        "version"
+      ],
+      "blacklistQueryParams": [
+        "config"
+      ],
+      "proxyHost": [
+        "https://stagehr-proxy.talentforce.ru"
+      ]
+    }
+  ]
+
+}
