@@ -107,14 +107,14 @@ class Application
                     "errorMessage" => $e->getMessage(),
                 ]
             );
-            if ($body === false){
+            if ($body === false) {
                 $body = "internal error";
             }
-            $response_data = new Response(500,["Content-Type" => 'application/json'],
+            $response_data = new Response(500, ["Content-Type" => 'application/json'],
                 $body
-                );
+            );
         }
-        $this->swooleBuildResponse($response_data,$response);
+        $this->swooleBuildResponse($response_data, $response);
 
     }
 
@@ -151,7 +151,6 @@ class Application
     {
         return $this->config;
     }
-
 
 
 }
