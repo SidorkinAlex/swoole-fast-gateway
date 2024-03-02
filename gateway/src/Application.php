@@ -100,16 +100,21 @@ class Application
 
         try {
             $response_data = $client->execute($this);
-        } catch (ClientExceptionInterface $e) {
-            $response_data = new Response(500,["Content-Type" => 'application/json'],
-                json_encode(
-                    [
-                        "errorMessage" => $e->getMessage(),
-                    ]
-                ));
-        }
 
-        //todo next proxy logic
+        } catch (ClientExceptionInterface $e) {
+            $body = json_encode(
+                [
+                    "errorMessage" => $e->getMessage(),
+                ]
+            );
+            if ($body === false){
+                $body = "internal error";
+            }
+            $response_data = new Response(500,["Content-Type" => 'application/json'],
+                $body
+                );
+        }
+        $this->swooleBuildResponse($response_data,$response);
 
     }
 
@@ -122,6 +127,21 @@ class Application
             }
         }
         return $request;
+    }
+
+    private function swooleBuildResponse(\Psr\Http\Message\ResponseInterface $response_data, \Swoole\Http\Response &$response): void
+    {
+        foreach ($response_data->getHeaders() as $headerName => $headerValue) {
+            if ($headerName == 'content-length') {
+                continue;
+            }
+            if ($headerName == 'content-encoding') {
+                continue;
+            }
+            $response->setHeader($headerName, $headerValue);
+        }
+        $response->setStatusCode($response_data->getStatusCode());
+        $response->end($response_data->getBody());
     }
 
 }
