@@ -144,4 +144,14 @@ class Application
         $response->end($response_data->getBody());
     }
 
+    /**
+     * @return stdClass
+     */
+    public function getConfig(): stdClass
+    {
+        return $this->config;
+    }
+
+
+
 }
