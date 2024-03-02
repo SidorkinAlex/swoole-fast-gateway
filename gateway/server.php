@@ -19,7 +19,7 @@ $http->on(
         go(function () use ($app) {
             while (true) {
                 Coroutine::sleep(50);
-                $app->getRepositoryCache()
+                $app->getRepositoryCacheCollector()
                     ->getMemoryCache()
                     ->validateCache();
             }
