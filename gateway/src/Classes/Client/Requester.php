@@ -37,6 +37,16 @@ class Requester
     public function execute(Application $app): ResponseInterface
     {
 
+        $handler = new SwooleHandler();
+        /** @phpstan-ignore-next-line */
+        $stack = HandlerStack::create($handler);
+        $client = new Client
+        ([
+            'handler' => $stack,
+            'http_errors' => false,
+            'allow_redirects' => false,
+        ]);
+
 
 
         return $response;
