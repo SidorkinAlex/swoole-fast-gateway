@@ -99,8 +99,7 @@ class MemoryCacheRequest implements CacheInterface, CacheCyclicValidateInterface
     public function validateCache(): void
     {
         $now = time();
-        /** @phpstan-ignore-next-line */
-        foreach ($this->repository as $key => $value) {
+        foreach ((new \ReflectionObject($this->repository))->getProperties() as $key) {
             if ($this->repository->{$key}->time < $now) {
                 unset($this->repository->{$key});
             }
