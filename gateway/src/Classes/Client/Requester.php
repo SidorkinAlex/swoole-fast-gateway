@@ -47,10 +47,8 @@ class Requester
             'allow_redirects' => false,
         ]);
 
+        $request = (new PsrRequestBuilder())->buildRequest($this->swooleRequest, $app->getConfig());
 
-
-        return $response;
     }
-
 
 }
