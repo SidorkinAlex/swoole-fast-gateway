@@ -1,3 +1,5 @@
 .idea/*
 gateway/custom/*
 gateway/config.json
+gateway/vendor/*
+test_service/*
