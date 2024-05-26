@@ -48,7 +48,21 @@ class Requester
         ]);
 
         $request = (new PsrRequestBuilder())->buildRequest($this->swooleRequest, $app->getConfig());
+        $request = $this->psrMutationHook($request, $app);
 
     }
+
+    private function psrMutationHook(Request $request, Application $app) :Request
+    {
+        $psrRequestMutationCollector = new PsrRequestMutationCollector($app->getConfig());
+        if ($psrRequestMutationCollector->getCountMutationExecutors() > 0) {
+            foreach ($psrRequestMutationCollector->getMutationExecutors() as $MutationExecutor) {
+                $request = $MutationExecutor->mutation($request);
+            }
+        }
+        return $request;
+    }
+
+
 
 }
