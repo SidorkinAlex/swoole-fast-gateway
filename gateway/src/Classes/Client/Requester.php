@@ -49,6 +49,7 @@ class Requester
 
         $request = (new PsrRequestBuilder())->buildRequest($this->swooleRequest, $app->getConfig());
         $request = $this->psrMutationHook($request, $app);
+        $dtoLogicExecutor = new DTOLogicExecutor($this->cacheRequestCollector, $app->getConfig(), $request, $this->swooleRequest);
 
     }
 
