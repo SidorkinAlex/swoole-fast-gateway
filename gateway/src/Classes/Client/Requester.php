@@ -51,6 +51,10 @@ class Requester
         $request = $this->psrMutationHook($request, $app);
         $dtoLogicExecutor = new DTOLogicExecutor($this->cacheRequestCollector, $app->getConfig(), $request, $this->swooleRequest);
 
+        $dtoLogicExecutor = $this->beforeRequestLogicHook($dtoLogicExecutor);
+        if ($dtoLogicExecutor->hasResponse()) {
+            return $dtoLogicExecutor->getResponse();
+        }
     }
 
     private function psrMutationHook(Request $request, Application $app) :Request
