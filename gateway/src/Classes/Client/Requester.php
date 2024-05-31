@@ -68,6 +68,17 @@ class Requester
         return $request;
     }
 
+    private function beforeRequestLogicHook(DTOLogicExecutor $dtoLogicExecutor): DTOLogicExecutor
+    {
+        $beforeSendingLogicExecutorCollector = new BeforeSendingLogicExecutorCollector($dtoLogicExecutor);
+        if ($beforeSendingLogicExecutorCollector->getCountMutationExecutors() > 0) {
+            $beforeSendingLogicExecutorCollector->executeCollection();
+            $dtoLogicExecutor = $beforeSendingLogicExecutorCollector->getDTOLogicExecutor();
+        }
+        unset($beforeSendingLogicExecutorCollector);
+        return $dtoLogicExecutor;
+
+    }
 
 
 }
