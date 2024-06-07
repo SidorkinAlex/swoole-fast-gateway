@@ -75,6 +75,22 @@ class Requester
         return $request;
     }
 
+    private function afterRequestLogicHook(Application $app, Request $request, ResponseInterface $result): ResponseInterface
+    {
+        $afterSendingLogicExecutorCollector = new AfterSendingLogicExecutorCollector(
+            new DTOLogicExecutor($this->cacheRequestCollector, $app->getConfig(), $request, $this->swooleRequest, $result)
+        );
+
+        if ($afterSendingLogicExecutorCollector->getCountMutationExecutors() > 0) {
+            $afterSendingLogicExecutorCollector->executeCollection();
+            if ($afterSendingLogicExecutorCollector->getDTOLogicExecutor()->hasResponse()) {
+                return $afterSendingLogicExecutorCollector->getDTOLogicExecutor()->getResponse();
+            }
+            unset($afterSendingLogicExecutorCollector);
+        }
+        return $result;
+    }
+
     private function beforeRequestLogicHook(DTOLogicExecutor $dtoLogicExecutor): DTOLogicExecutor
     {
         $beforeSendingLogicExecutorCollector = new BeforeSendingLogicExecutorCollector($dtoLogicExecutor);
