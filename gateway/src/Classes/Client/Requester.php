@@ -55,6 +55,13 @@ class Requester
         if ($dtoLogicExecutor->hasResponse()) {
             return $dtoLogicExecutor->getResponse();
         }
+
+        $response = $client->send($dtoLogicExecutor->getPsr7Request());
+
+        $response = $this->afterRequestLogicHook($app, $dtoLogicExecutor->getPsr7Request(), $response);
+
+
+        return $response;
     }
 
     private function psrMutationHook(Request $request, Application $app) :Request
