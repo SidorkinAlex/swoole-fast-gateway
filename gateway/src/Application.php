@@ -6,7 +6,6 @@ use GuzzleHttp\Psr7\Response;
 use HaydenPierce\ClassFinder\ClassFinder;
 use Psr\Http\Client\ClientExceptionInterface;
 use Sidalex\Gateway\Classes\Cache\CacheRequestCollector;
-use Sidalex\Gateway\Classes\Cache\ResponseCache;
 use Sidalex\Gateway\Classes\Client\Requester;
 use Sidalex\Gateway\Classes\Collectors\SwooleRequestMutationCollector;
 use Sidalex\Gateway\Classes\Config\ConfigException;
@@ -133,9 +132,6 @@ class Application
     {
         foreach ($response_data->getHeaders() as $headerName => $headerValue) {
             if ($headerName == 'content-length') {
-                continue;
-            }
-            if ($headerName == 'content-encoding') {
                 continue;
             }
             $response->setHeader($headerName, $headerValue);
