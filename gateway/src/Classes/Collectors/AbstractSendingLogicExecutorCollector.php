@@ -14,7 +14,7 @@ abstract class AbstractSendingLogicExecutorCollector implements SendingExecutorC
      * @var array|LogicExecutorInterface[]
      */
     protected array $executorList = [];
-    private DTOLogicExecutor $DTOLogicExecutor;
+    protected DTOLogicExecutor $DTOLogicExecutor;
 //    protected string $namespace = '';
 //    protected array $classes =[];
     protected string $configName;
@@ -25,14 +25,14 @@ abstract class AbstractSendingLogicExecutorCollector implements SendingExecutorC
     {
         $this->DTOLogicExecutor = $DTOLogicExecutor;
         try {
-            foreach ($this->DTOLogicExecutor->getConfig()->{$this->configName} as $class) {
-                $object = new $class();
-                if ($object instanceof LogicExecutorInterface) {
-                    $this->executorList[] = $object;
+            if (!empty($this->DTOLogicExecutor->getConfig()->{$this->configName})) {
+                foreach ($this->DTOLogicExecutor->getConfig()->{$this->configName} as $class) {
+                    $object = new $class();
+                    if ($object instanceof LogicExecutorInterface) {
+                        $this->executorList[] = $object;
+                    }
                 }
             }
-
-
         } catch (\Exception $e) {
             echo $e->getMessage();
             // TODO сделать нормальную обработку эксепшенов
