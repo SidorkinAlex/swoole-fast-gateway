@@ -3,6 +3,7 @@
 namespace Sidalex\Gateway\Classes\CoreLogicExecutors;
 
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Sidalex\Gateway\Classes\Cache\CacheRequestCollector;
 
@@ -74,9 +75,13 @@ class DTOLogicExecutor
 
     /**
      * @return mixed
+     * @throws \Exception
      */
-    public function getResponse(): mixed
+    public function getResponse(): Response
     {
+        if(!$this->response instanceof Response){
+            throw new \Exception('Response is null');
+        }
         return $this->response;
     }
 
